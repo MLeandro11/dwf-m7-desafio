@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.API_BASE_URL;
+// const API_BASE_URL = process.env.API_BASE_URL;
 
 const state = {
   data: {
@@ -36,7 +36,7 @@ const state = {
     }
     try {
       const res = await fetch(
-        `${API_BASE_URL}/mascotas-cerca-de?lat=${lat}&lng=${lng}`
+        `$/mascotas-cerca-de?lat=${lat}&lng=${lng}`
       );
       const data = await res.json();
       const petsLost = data.filter(p => p.lost == true);
@@ -53,7 +53,7 @@ const state = {
       console.error("error al enviar el reporte");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/reports`, {
+      const res = await fetch(`/reports`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -70,7 +70,7 @@ const state = {
       console.error("falta email");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/users/email/${email}`);
+      const res = await fetch(`/users/email/${email}`);
       const data = await res.json();
       const cs = this.getState();
       cs.emailInDataBase = data.exists;
@@ -87,7 +87,7 @@ const state = {
       console.error("error signIn");
     }
     try {
-      const res = await fetch(API_BASE_URL + "/auth/token", {
+      const res = await fetch(`/auth/token`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,7 @@ const state = {
       console.error("error signUp");
     }
     try {
-      const res = await fetch(API_BASE_URL + "/auth", {
+      const res = await fetch(`/auth`, {
         method: "post",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +132,7 @@ const state = {
       console.error("falta token");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/me`, {
+      const res = await fetch(`/me`, {
         method: "GET",
         headers: {
           Authorization: `bearer ${token}`,
@@ -153,7 +153,7 @@ const state = {
       console.error("falta token o data del user a actualizar");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/me`, {
+      const res = await fetch(`/me`, {
         method: "PUT",
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +174,7 @@ const state = {
       console.error("falta token o data de mascota");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/me/reports`, {
+      const res = await fetch(`/me/reports`, {
         method: "post",
         headers: {
           'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ const state = {
       console.error("falta token");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/me/reports`, {
+      const res = await fetch(`/me/reports`, {
         headers: {
           Authorization: `bearer ${token}`,
         },
@@ -229,7 +229,7 @@ const state = {
       console.error("falta token o pet");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/me/reports/${pet.id}`, {
+      const res = await fetch(`/me/reports/${pet.id}`, {
         method: "put",
         headers: {
           'Content-Type': 'application/json',
@@ -250,7 +250,7 @@ const state = {
       console.error("falta token o pet");
     }
     try {
-      const res = await fetch(`${API_BASE_URL}/me/reports/${pet.id}`, {
+      const res = await fetch(`/me/reports/${pet.id}`, {
         method: "delete",
         headers: {
           'Content-Type': 'application/json',
@@ -277,7 +277,7 @@ const state = {
     email &&
       token &&
       localStorage.setItem("user-data", JSON.stringify({ email, token }));
-    console.log("Soy el state, he cambiado", this.data);
+    //console.log("Soy el state, he cambiado", this.data);
   },
   subscribe(callback) {
     this.listeners.push(callback);
