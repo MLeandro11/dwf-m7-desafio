@@ -6,7 +6,6 @@ import { getDataUser, getMyReports, getOneReport, reportMyPet, updateDataUser, u
 import { signup, SECRET, signin } from "./controllers/auth.controller";
 import { lostPets } from "./controllers/pet.controller"
 import { createReport, getReports } from "./controllers/report.controller"
-import { sequelize } from "./models/conn"
 
 const ruta = path.resolve(__dirname, "../dist");
 const port = process.env.PORT || 4000
@@ -37,8 +36,14 @@ app.post('/auth', async (req, res) => {
       message: "falta el body"
     })
   }
-  const auth = await signup(req.body)
-  res.json(auth)
+  try {
+    const auth = await signup(req.body)
+    res.status(200).json(auth)
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 
 //signin
@@ -50,9 +55,11 @@ app.post('/auth/token', async (req, res) => {
   }
   try {
     const token = await signin(req.body)
-    res.json({ token })
+    res.status(200).json({ token })
   } catch (error) {
-    throw console.error("error", error);
+    res.status(400).json({
+      message: error.message
+    })
   }
 })
 // verificar email
@@ -63,30 +70,48 @@ app.get('/users/email/:email', async (req, res) => {
       message: "falta email"
     })
   }
-  const exists = await verifyEmail(email)
-  res.json({ exists: !!exists })
+  try {
+    const exists = await verifyEmail(email)
+    res.status(200).json({ exists: !!exists })
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
-// obtener mi data
+// obtener data usuario
 app.get('/me', authMiddleware, async (req, res) => {
   if (!req._user.user_id) {
     res.status(400).json({
       message: "falta el id"
     })
   }
-  const user = await getDataUser(req._user.user_id)
-  res.json(user)
+  try {
+    const user = await getDataUser(req._user.user_id)
+    res.status(200).json(user)
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
-// actualizar mi data ****resolver****
+// actualizar data usuario 
 app.put('/me', authMiddleware, async (req, res) => {
   if (!req._user.user_id) {
     res.status(400).json({
       message: "falta el id"
     })
   }
-  await updateDataUser(req._user.user_id, req.body)
-  res.json({
-    message: "datos actualizados"
-  })
+  try {
+    await updateDataUser(req._user.user_id, req.body)
+    res.status(200).json({
+      message: "datos actualizados"
+    })
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 
 //reportar mi mascota perdida
@@ -97,22 +122,53 @@ app.post('/me/reports', authMiddleware, async (req, res) => {
       message: "error"
     })
   }
-  const petReport = await reportMyPet(userId, req.body)
-  res.json({
-    message: 'mascota reportada'
-  })
+  try {
+    const petReport = await reportMyPet(userId, req.body)
+    res.status(200).json({
+      message: 'mascota reportada'
+    })
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 
 // obtener mis reportes de mascotas
 app.get('/me/reports', authMiddleware, async (req, res) => {
-  const myReports = await getMyReports(req._user.user_id)
-  res.json(myReports)
+  const userId = req._user.user_id
+  if (!userId) {
+    res.status(400).json({
+      message: "error"
+    })
+  }
+  try {
+    const myReports = await getMyReports(userId)
+    res.status(200).json(myReports)
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 
 //obtener un report
 app.get('/me/reports/:id', authMiddleware, async (req, res) => {
-  const myReport = await getOneReport(req._user.user_id, req.params.id)
-  res.json(myReport)
+  const userId = req._user.user_id
+  const petId = req.params.id
+  if (!userId && !petId) {
+    res.status(400).json({
+      message: "error"
+    })
+  }
+  try {
+    const myReport = await getOneReport(userId, petId)
+    res.status(200).json(myReport)
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 
 //actualizar mi report 
@@ -124,24 +180,36 @@ app.put('/me/reports/:id', authMiddleware, async (req, res) => {
       message: "error"
     })
   }
-  await updateReport(userId, petId, req.body)
-  res.json({
-    message: 'update report'
-  })
+  try {
+    await updateReport(userId, petId, req.body)
+    res.status(200).json({
+      message: 'update report'
+    })
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 // eliminar mi report
 app.delete('/me/reports/:id', authMiddleware, async (req, res) => {
   const userId = req._user.user_id
   const petId = req.params.id
-  if (!userId) {
+  if (!userId && !petId) {
     res.status(400).json({
       message: "error"
     })
   }
-  await deleteReport(userId, petId)
-  res.json({
-    message: 'delete report'
-  })
+  try {
+    await deleteReport(userId, petId)
+    res.status(200).json({
+      message: 'delete report'
+    })
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 // crear un reporte
 app.post('/reports', async (req, res) => {
@@ -150,15 +218,27 @@ app.post('/reports', async (req, res) => {
       message: "error body"
     })
   }
-  const report = await createReport(req.body)
-  res.json({
-    message: 'reporte creado'
-  })
+  try {
+    await createReport(req.body)
+    res.status(200).json({
+      message: 'reporte creado'
+    })
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 // todos los reportes creados
 app.get('/reports', async (req, res) => {
-  const reports = await getReports()
-  res.json(reports)
+  try {
+    const reports = await getReports()
+    res.status(200).json(reports)
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 
 // obtener mascotas cercanas
@@ -168,9 +248,14 @@ app.get('/mascotas-cerca-de', async (req, res) => {
       message: "falta el body"
     })
   }
-  const pets = await lostPets(req.query)
-
-  res.json(pets)
+  try {
+    const pets = await lostPets(req.query)
+    res.status(200).json(pets)
+  } catch (error) {
+    res.status(400).json({
+      message: error.message
+    })
+  }
 })
 
 app.get('/*', express.static(ruta))
@@ -178,13 +263,6 @@ app.get('/*', function (req, res) {
   res.sendFile(ruta + "/index.html")
 })
 
-
-
-async function main() {
-  app.listen(port, () => {
-    console.log(`listening on port ${port}`)
-  })
-  /* await sequelize.sync({ force: true }) */
-
-}
-main()
+app.listen(port, () => {
+  console.log(`listening on port ${port}`)
+})

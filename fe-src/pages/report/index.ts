@@ -37,7 +37,7 @@ class ReportPage extends HTMLElement {
         `
       }
       state.reportMyPet(dataPet, () => {
-        Router.go("/my-pets");
+        //Router.go("/my-pets");
         window.location.reload();
       });
     })

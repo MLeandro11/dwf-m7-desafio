@@ -162,7 +162,6 @@ const state = {
         body: JSON.stringify(changes),
       })
       const data = await res.json()
-      console.log(data);
       callback();
     } catch (error) {
       console.error(error);
@@ -170,7 +169,7 @@ const state = {
   },
   async reportMyPet(dataPet, callback) {
     const { token } = this.getState();
-    if (!token || !dataPet) {
+    if (!token) {
       console.error("falta token o data de mascota");
     }
     try {
@@ -183,7 +182,6 @@ const state = {
         body: JSON.stringify(dataPet),
       })
       const data = await res.json()
-      console.log(data);
       callback();
     } catch (error) {
       console.error(error);
@@ -238,7 +236,6 @@ const state = {
         body: JSON.stringify(dataPet),
       })
       const data = await res.json()
-      console.log(data);
       callback();
     } catch (error) {
       console.error(error);
@@ -258,7 +255,6 @@ const state = {
         },
       })
       const data = await res.json()
-      console.log(data);
       callback();
     } catch (error) {
       console.error(error);
@@ -277,7 +273,7 @@ const state = {
     email &&
       token &&
       localStorage.setItem("user-data", JSON.stringify({ email, token }));
-    console.log("Soy el state, he cambiado", this.data);
+    //console.log("Soy el state, he cambiado", this.data);
   },
   subscribe(callback) {
     this.listeners.push(callback);

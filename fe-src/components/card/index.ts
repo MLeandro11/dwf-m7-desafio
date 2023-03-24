@@ -51,7 +51,7 @@ class Card extends HTMLElement {
             <img src="${this.photo}" alt="">
             </div>
             <div class="card__info">
-              <div>
+              <div class="card__info-name">
                 <my-text type="text" class="title">${this.name}</my-text>
                 <my-text type="text-secondary" class="title">${this.location}</my-text>
               </div>
@@ -83,19 +83,16 @@ class Card extends HTMLElement {
     const style = document.createElement('style')
     style.innerHTML = /*css*/`
       .card{
-          width: 300px;
-          height: 400px;
-          display: flex;
-          flex-direction: column;
+          display: grid; 
+          grid-template-columns: 300px; 
+          grid-template-rows: 300px 100px; 
           overflow: hidden;
           border-radius: 10px;
           border: 3px solid #e0e0e0;
       }
       .card__image{
           width: 100%;
-          /* height: 300px; */
-          flex: 1;
-          
+          height: 100%;
       }
       .card__image > img{
           object-fit: cover;
@@ -107,6 +104,9 @@ class Card extends HTMLElement {
           justify-content: space-between;
           align-items: center;
           padding: 8px;
+      }
+      .card__info-name{
+        overflow: hidden;
       }
       .modal{
         display: none;

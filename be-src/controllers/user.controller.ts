@@ -30,27 +30,34 @@ export async function updateDataUser(userId, dataUser) {
 }
 
 export async function reportMyPet(userId, dataPet) {
-  const result = await cloudinary.uploader.upload(dataPet.dataURL);
-  const pet = await Pet.create({
-    name: dataPet.name,
-    picture_URL: result.url,
-    lat: dataPet.lat,
-    lng: dataPet.lng,
-    location: dataPet.location,
-    userId,
-  });
-  const algoliaRes = await index.saveObject({
-    objectID: pet.get("id"),
-    name: dataPet.name,
-    lost: pet.get("lost"),
-    location: dataPet.location,
-    photo: result.url,
-    _geoloc: {
+  try {
+    const result = await cloudinary.uploader.upload(dataPet.dataURL);
+    const pet = await Pet.create({
+      name: dataPet.name,
+      picture_URL: result.url,
       lat: dataPet.lat,
       lng: dataPet.lng,
-    },
-  });
-  return pet;
+      location: dataPet.location,
+      userId,
+    });
+
+    const algoliaRes = await index.saveObject({
+      objectID: pet.get("id"),
+      name: dataPet.name,
+      lost: pet.get("lost"),
+      location: dataPet.location,
+      photo: result.url,
+      _geoloc: {
+        lat: dataPet.lat,
+        lng: dataPet.lng,
+      },
+    });
+    return pet;
+
+  } catch (error) {
+    throw console.error('error de', error);
+
+  }
 
 }
 
