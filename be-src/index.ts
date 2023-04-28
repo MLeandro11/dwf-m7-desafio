@@ -48,7 +48,7 @@ app.post('/auth', async (req, res) => {
   }
 })
 
-//signin
+
 app.post('/auth/token', async (req, res) => {
   if (!req.body) {
     res.status(400).json({
