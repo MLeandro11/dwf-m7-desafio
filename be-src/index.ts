@@ -11,9 +11,7 @@ const ruta = path.resolve(__dirname, "../dist");
 const port = process.env.PORT || 4000
 
 const app = express()
-app.use(cors({
-  origin: '*',
-}))
+app.use(cors())
 app.use(express.json({
   limit: "50mb",
   extended: true,
@@ -48,7 +46,7 @@ app.post('/auth', async (req, res) => {
   }
 })
 
-
+//signin
 app.post('/auth/token', async (req, res) => {
   if (!req.body) {
     res.status(400).json({
