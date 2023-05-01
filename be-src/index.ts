@@ -11,7 +11,9 @@ const ruta = path.resolve(__dirname, "../dist");
 const port = process.env.PORT || 4000
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: "*",
+}))
 app.use(express.json({
   limit: "50mb",
   extended: true,
